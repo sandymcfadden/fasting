@@ -84,31 +84,32 @@ export function DataPortability() {
     setImporting(true);
     const { file, mode } = preview;
 
-    const stripped = (arr: (Schedule | DayLog)[]) =>
-      arr.map(item => { const { id: _id, ...rest } = item as Record<string, unknown>; return rest; });
+    function stripId<T extends { id?: number }>({ id: _id, ...rest }: T): Omit<T, 'id'> {
+      return rest;
+    }
 
     if (mode === 'replace') {
       await db.transaction('rw', db.schedules, db.dayLogs, async () => {
         await db.schedules.clear();
         await db.dayLogs.clear();
-        await db.schedules.bulkAdd(stripped(file.schedules) as Schedule[]);
-        await db.dayLogs.bulkAdd(stripped(file.dayLogs) as DayLog[]);
+        await db.schedules.bulkAdd(file.schedules.map(stripId) as Schedule[]);
+        await db.dayLogs.bulkAdd(file.dayLogs.map(stripId) as DayLog[]);
       });
     } else {
       // Merge: imported records win on conflict (same startDate / same date)
       await db.transaction('rw', db.schedules, db.dayLogs, async () => {
-        for (const s of stripped(file.schedules) as Schedule[]) {
+        for (const s of file.schedules.map(stripId) as Schedule[]) {
           const existing = await db.schedules.where('startDate').equals(s.startDate).first();
           if (existing) {
-            await db.schedules.update(existing.id!, s);
+            await db.schedules.update(existing.id!, { ...s } as Partial<Schedule>);
           } else {
             await db.schedules.add(s);
           }
         }
-        for (const l of stripped(file.dayLogs) as DayLog[]) {
+        for (const l of file.dayLogs.map(stripId) as DayLog[]) {
           const existing = await db.dayLogs.where('date').equals(l.date).first();
           if (existing) {
-            await db.dayLogs.update(existing.id!, l);
+            await db.dayLogs.update(existing.id!, { ...l } as Partial<DayLog>);
           } else {
             await db.dayLogs.add(l);
           }
