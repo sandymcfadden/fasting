@@ -56,9 +56,7 @@ export function DayDetail({ date, onClose }: Props) {
   const todayStr = today();
   const isFuture = date > todayStr;
 
-  const canSave = !isFuture
-    ? status !== null
-    : hasOverride;
+  const canSave = status !== null || hasOverride;
 
   async function save() {
     if (!canSave) return;
