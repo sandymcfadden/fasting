@@ -4,7 +4,7 @@ import { format, addMonths, subMonths } from 'date-fns';
 import { db } from '../db/db';
 import { getFastingTypeForDate, getCalendarDays, today } from '../utils/schedule';
 import type { DayStatus, FastingType } from '../types';
-import { FASTING_TYPES } from '../data/fastingTypes';
+import { FASTING_TYPES, getFastingType } from '../data/fastingTypes';
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -82,7 +82,7 @@ export function CalendarView({ onDayClick }: Props) {
     [monthStart, monthEnd],
   );
 
-  const logMap = new Map(dayLogs?.map(l => [l.date, l.status]));
+  const logMap = new Map(dayLogs?.map(l => [l.date, { status: l.status, override: l.fastingTypeOverride }]));
 
   return (
     <div>
@@ -119,6 +119,11 @@ export function CalendarView({ onDayClick }: Props) {
         {days.map(dateStr => {
           const isCurrentMonth = dateStr >= format(new Date(year, month, 1), 'yyyy-MM-dd') &&
             dateStr <= format(new Date(year, month + 1, 0), 'yyyy-MM-dd');
+          const logEntry = logMap.get(dateStr);
+          const scheduledType = schedules ? getFastingTypeForDate(schedules, dateStr) : null;
+          const displayType = logEntry?.override
+            ? (getFastingType(logEntry.override) ?? scheduledType)
+            : scheduledType;
           return (
             <CalendarDay
               key={dateStr}
@@ -126,8 +131,8 @@ export function CalendarView({ onDayClick }: Props) {
               isCurrentMonth={isCurrentMonth}
               isToday={dateStr === todayStr}
               isPast={dateStr < todayStr}
-              fastingType={schedules ? getFastingTypeForDate(schedules, dateStr) : null}
-              status={logMap.get(dateStr)}
+              fastingType={displayType}
+              status={logEntry?.status}
               onClick={() => onDayClick(dateStr)}
             />
           );

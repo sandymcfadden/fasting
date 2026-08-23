@@ -25,7 +25,8 @@ export type DayStatus = 'completed' | 'partial' | 'skipped';
 export interface DayLog {
   id?: number;
   date: string; // YYYY-MM-DD, unique index
-  status: DayStatus;
+  status?: DayStatus;
+  fastingTypeOverride?: string;
   notes?: string;
   updatedAt: string;
 }
