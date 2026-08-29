@@ -62,22 +62,18 @@ export function DayDetail({ date, onClose }: Props) {
     if (!canSave) return;
     setSaving(true);
     const now = new Date().toISOString();
-    const data = {
-      date,
-      ...(status ? { status } : {}),
-      ...(hasOverride ? { fastingTypeOverride: fastingTypeOverride! } : {}),
+    const effectiveTypeId = fastingTypeOverride ?? scheduledType?.id;
+    const fields = {
+      status: status ?? undefined,
+      fastingTypeOverride: hasOverride ? fastingTypeOverride! : undefined,
+      fastingTypeId: effectiveTypeId ?? undefined,
       notes: notes || undefined,
       updatedAt: now,
     };
     if (log) {
-      await db.dayLogs.update(log.id!, {
-        status: status ?? undefined,
-        fastingTypeOverride: hasOverride ? fastingTypeOverride! : undefined,
-        notes: notes || undefined,
-        updatedAt: now,
-      });
+      await db.dayLogs.update(log.id!, fields);
     } else {
-      await db.dayLogs.add(data);
+      await db.dayLogs.add({ date, ...fields });
     }
     setSaving(false);
     onClose();

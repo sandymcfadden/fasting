@@ -27,6 +27,7 @@ export interface DayLog {
   date: string; // YYYY-MM-DD, unique index
   status?: DayStatus;
   fastingTypeOverride?: string;
+  fastingTypeId?: string; // effective type at save time — preserved if schedule is later deleted
   notes?: string;
   updatedAt: string;
 }

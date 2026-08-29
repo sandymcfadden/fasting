@@ -82,7 +82,7 @@ export function CalendarView({ onDayClick }: Props) {
     [monthStart, monthEnd],
   );
 
-  const logMap = new Map(dayLogs?.map(l => [l.date, { status: l.status, override: l.fastingTypeOverride }]));
+  const logMap = new Map(dayLogs?.map(l => [l.date, { status: l.status, override: l.fastingTypeOverride, fastingTypeId: l.fastingTypeId }]));
 
   return (
     <div>
@@ -123,7 +123,7 @@ export function CalendarView({ onDayClick }: Props) {
           const scheduledType = schedules ? getFastingTypeForDate(schedules, dateStr) : null;
           const displayType = logEntry?.override
             ? (getFastingType(logEntry.override) ?? scheduledType)
-            : scheduledType;
+            : scheduledType ?? (logEntry?.fastingTypeId ? getFastingType(logEntry.fastingTypeId) ?? null : null);
           return (
             <CalendarDay
               key={dateStr}
