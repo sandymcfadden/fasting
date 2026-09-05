@@ -84,7 +84,7 @@ export function DataPortability() {
     setImporting(true);
     const { file, mode } = preview;
 
-    function stripId<T extends { id?: number }>({ id: _id, ...rest }: T): Omit<T, 'id'> {
+    function stripId<T extends { id?: string }>({ id: _id, ...rest }: T): Omit<T, 'id'> {
       return rest;
     }
 

@@ -13,7 +13,7 @@ export interface ScheduleSegment {
 }
 
 export interface Schedule {
-  id?: number;
+  id?: string;
   name: string;
   startDate: string; // YYYY-MM-DD
   pattern: ScheduleSegment[];
@@ -23,7 +23,7 @@ export interface Schedule {
 export type DayStatus = 'completed' | 'partial' | 'skipped';
 
 export interface DayLog {
-  id?: number;
+  id?: string;
   date: string; // YYYY-MM-DD, unique index
   status?: DayStatus;
   fastingTypeOverride?: string;

@@ -1,3 +1,5 @@
+import { SyncButton } from './SyncButton';
+
 type View = 'calendar' | 'schedules';
 
 interface Props {
@@ -12,6 +14,7 @@ export function Header({ view, onViewChange }: Props) {
         <div className="flex items-center gap-2">
           <span className="text-2xl">⏱</span>
           <span className="font-semibold text-lg tracking-tight">Fasting Calendar</span>
+          {import.meta.env.VITE_DEXIE_CLOUD_URL && <SyncButton />}
         </div>
         <nav className="flex gap-1 bg-blue-700 rounded-lg p-1">
           <button
