@@ -25,3 +25,7 @@ dist-ssr
 
 # Claude Code local settings
 .claude
+
+# Dexie Cloud CLI credentials (contain secrets — never commit)
+dexie-cloud.key
+dexie-cloud.json
